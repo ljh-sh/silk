@@ -1,5 +1,5 @@
-// silk-convert: convert WeChat SILK audio to/from other formats
-// v0.2.0 — initial public release
+// silk: convert WeChat SILK audio to/from other formats
+// v0.3.0 — renamed from silk-convert to silk
 
 pub mod codec;
 pub mod subcmd;

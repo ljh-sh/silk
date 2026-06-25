@@ -2,11 +2,11 @@
 
 ## Scope
 
-This document describes the security properties of `silk-convert` (a Rust CLI
+This document describes the security properties of `silk` (a Rust CLI
 for converting WeChat SILK audio). It is intended to help users decide whether
 to trust the binary.
 
-## What silk-convert does
+## What silk does
 
 - Reads audio files (SILK, WAV) from disk
 - Decodes/encodes audio in memory or via temporary files
@@ -45,8 +45,8 @@ SDK. Output buffers are pre-allocated based on SDK-reported max size.
 To verify the binary you have matches the source:
 
 ```bash
-git clone https://github.com/ljh-sh/silk-convert
-cd silk-convert
+git clone https://github.com/ljh-sh/silk
+cd silk
 cargo build --release
 sha256sum target/release/silk
 ```

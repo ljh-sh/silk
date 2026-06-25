@@ -72,22 +72,33 @@ size: 24812 bytes
 bitrate: ~13.3 kbps
 ```
 
+## Benchmark (v0.2.1, M-series Mac, 15s silk file)
+
+| | Python (pysilk) | Rust (silk) | Speedup |
+|---|---|---|---|
+| Single file decode | 7-10ms (silk only) / 20-40ms wall | 10ms wall | ~2-3x wall |
+| Batch 13 files | 327ms (incl. 13× Python startup) | 127ms | **2.5x** |
+
+Honest note: silk decode/encode itself runs at similar speed (both use the C silk SDK via FFI). The main advantage of the Rust binary is **zero per-invocation startup** — important for batch and shell pipelines.
+
+Why this matters: when you pipe 100 silk files through xargs, Python pays 100× startup tax; Rust doesn't.
+
 ## Why
 
 Search for "silk to mp3" or "wechat voice converter" — the existing tools are:
 
-- `geniusnut/silk2wav` — Python, slow
+- `geniusnut/silk2wav` — Python, slow (startup-heavy)
 - `alexyangfox/wechat_silk` — Python, decode-only
 - `super1207/a2silk-cli` — Python, both directions but no batch
 
-This is the **first Rust implementation** with batch + roundtrip. Single static binary, ~50x faster than Python.
+This is the **first Rust implementation** with batch + roundtrip. Single static binary, no interpreter startup, no Python deps.
 
 ## Roadmap
 
 | Version | Status | Features |
 |---------|--------|----------|
 | v0.2.0 | ✅ | WAV + SILK + 5 subcmd |
-| v0.2.1 | ✅ | Binary rename to `silk`, layer naming |
+| v0.2.1 | ✅ | Use silk-codec 0.2, rename binary to `silk` |
 | v0.3.0 | 🚧 | MP3/Opus/AAC/FLAC via symphonia |
 
 ## License

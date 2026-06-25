@@ -4,15 +4,11 @@
 
 > 微信 SILK 音频转换器。单个 Rust 二进制，无 Python 依赖。
 
-> **Repo**: `ljh-sh/silk-convert` (SEO-friendly name)
-> **Binary**: `silk` (x-cmd style short name)
-> **x-cmd module**: `x silk` (planned)
-
 ## What is this
 
 WeChat voice messages are encoded with the [SILK codec](https://en.wikipedia.org/wiki/Silk_(codec)) (originally Skype). This tool:
 
-- **Decodes** SILK → WAV (other formats coming in v0.3)
+- **Decodes** SILK → WAV (other formats coming in v0.4)
 - **Encodes** WAV → SILK (for re-sending via WeChat)
 - **Detects** audio format by magic bytes
 - **Batch processes** directories
@@ -33,7 +29,11 @@ WeChat voice messages are encoded with the [SILK codec](https://en.wikipedia.org
 ## Install
 
 ```bash
-cargo install --git https://github.com/ljh-sh/silk-convert
+# from source
+cargo install --git https://github.com/ljh-sh/silk
+
+# or download from releases
+# https://github.com/ljh-sh/silk/releases
 ```
 
 ## Usage
@@ -74,9 +74,7 @@ bitrate: ~13.3 kbps
 
 ## Comparison vs alternatives
 
-The honest answer to "why use this":
-
-| | silk-convert (this) | geniusnut/silk2wav | alexyangfox/wechat_silk | super1207/a2silk-cli |
+| | silk (this) | geniusnut/silk2wav | alexyangfox/wechat_silk | super1207/a2silk-cli |
 |---|---|---|---|---|
 | Language | Rust | Python | Python | Python |
 | Single static binary | ✅ | ❌ | ❌ | ❌ |
@@ -91,10 +89,10 @@ The honest answer to "why use this":
 
 ## Benchmark (M-series Mac, 13 real WeChat silk files, batch mode)
 
-| Tool | Wall time | Per-file | vs silk-convert |
+| Tool | Wall time | Per-file | vs silk |
 |---|---|---|---|
-| **silk-convert** (Rust) | 127ms | 9.8ms | **1.0x baseline** |
-| Python (pysilk) | 327ms | 25.2ms | 0.39x (silk-convert 2.5x faster) |
+| **silk** (Rust) | 127ms | 9.8ms | **1.0x baseline** |
+| Python (pysilk) | 327ms | 25.2ms | 0.39x (silk 2.5x faster) |
 
 **2.5x faster is already a strong result.** The Rust binary's main advantage
 is **zero per-process startup** — when you process 100 files via xargs, Python
@@ -118,9 +116,9 @@ time silk batch ./ -o ./out/ --to wav --pattern "*.silk"
 
 | Scenario | Best tool |
 |---|---|
-| One file, quick CLI | silk-convert |
-| 100+ files in a directory | silk-convert (batch) |
-| Need MP3 output | silk-convert v0.3 (or a2silk-cli today) |
+| One file, quick CLI | silk |
+| 100+ files in a directory | silk (batch) |
+| Need MP3 output | a2silk-cli today, silk v0.4 later |
 | Embed in a Python project | pysilk directly |
 | Don't trust compiled binaries | Python alternatives (still ship C code) |
 
@@ -134,10 +132,9 @@ time silk batch ./ -o ./out/ --to wav --pattern "*.silk"
 
 | Version | Status | Features |
 |---------|--------|----------|
-| v0.2.0 | ✅ | WAV + SILK + 5 subcmd |
-| v0.2.1 | ✅ | Use silk-codec 0.2, rename binary to `silk` |
-| v0.2.2 | ✅ | Apache 2.0 license, COMPARISON doc |
-| v0.3.0 | 🚧 | MP3/Opus/AAC/FLAC via symphonia |
+| v0.2.x | ✅ | WAV + SILK + 5 subcmd, Apache 2.0, benchmark doc |
+| v0.3.0 | 🚧 | Repo rename, docs/, GitHub Pages |
+| v0.4.0 | 📋 | MP3/Opus/AAC/FLAC via symphonia |
 
 ## License
 

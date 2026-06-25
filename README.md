@@ -72,26 +72,63 @@ size: 24812 bytes
 bitrate: ~13.3 kbps
 ```
 
-## Benchmark (v0.2.1, M-series Mac, 15s silk file)
+## Comparison vs alternatives
 
-| | Python (pysilk) | Rust (silk) | Speedup |
+The honest answer to "why use this":
+
+| | silk-convert (this) | geniusnut/silk2wav | alexyangfox/wechat_silk | super1207/a2silk-cli |
+|---|---|---|---|---|
+| Language | Rust | Python | Python | Python |
+| Single static binary | ✅ | ❌ | ❌ | ❌ |
+| Decode | ✅ | ✅ | ✅ | ✅ |
+| Encode (back to silk) | ✅ | ❌ | ❌ | ✅ |
+| Batch | ✅ native | ❌ | ❌ | ❌ |
+| Magic-byte format detect | ✅ | ❌ (extension only) | ❌ | ❌ |
+| Dependencies | 6 pure-Rust crates | Python + ffmpeg | Python | Python |
+| Cold-start per file | ~10ms | ~40-60ms | similar | similar |
+| License | Apache 2.0 | MIT | — | — |
+| Status | active | inactive | inactive | inactive |
+
+## Benchmark (M-series Mac, 13 real WeChat silk files, batch mode)
+
+| Tool | Wall time | Per-file | vs silk-convert |
 |---|---|---|---|
-| Single file decode | 7-10ms (silk only) / 20-40ms wall | 10ms wall | ~2-3x wall |
-| Batch 13 files | 327ms (incl. 13× Python startup) | 127ms | **2.5x** |
+| **silk-convert** (Rust) | 127ms | 9.8ms | **1.0x baseline** |
+| Python (pysilk) | 327ms | 25.2ms | 0.39x (silk-convert 2.5x faster) |
 
-Honest note: silk decode/encode itself runs at similar speed (both use the C silk SDK via FFI). The main advantage of the Rust binary is **zero per-invocation startup** — important for batch and shell pipelines.
+**2.5x faster is already a strong result.** The Rust binary's main advantage
+is **zero per-process startup** — when you process 100 files via xargs, Python
+pays 100× startup tax. The actual SILK decode (via the same C SDK) is comparable.
 
-Why this matters: when you pipe 100 silk files through xargs, Python pays 100× startup tax; Rust doesn't.
+Reproduce:
+```bash
+# Python
+pip install pysilk
+time for f in *.silk; do python3 -c "
+import wave, pysilk
+with open('$f','rb') as i, open('${f%.silk}.wav','wb') as o:
+    pysilk.decode(i, o, 24000)
+"; done
 
-## Why
+# Rust
+time silk batch ./ -o ./out/ --to wav --pattern "*.silk"
+```
 
-Search for "silk to mp3" or "wechat voice converter" — the existing tools are:
+## When to use what
 
-- `geniusnut/silk2wav` — Python, slow (startup-heavy)
-- `alexyangfox/wechat_silk` — Python, decode-only
-- `super1207/a2silk-cli` — Python, both directions but no batch
+| Scenario | Best tool |
+|---|---|
+| One file, quick CLI | silk-convert |
+| 100+ files in a directory | silk-convert (batch) |
+| Need MP3 output | silk-convert v0.3 (or a2silk-cli today) |
+| Embed in a Python project | pysilk directly |
+| Don't trust compiled binaries | Python alternatives (still ship C code) |
 
-This is the **first Rust implementation** with batch + roundtrip. Single static binary, no interpreter startup, no Python deps.
+## Security
+
+- 6 pure-Rust deps + 1 FFI (silk-codec) — auditable
+- No network calls, no telemetry, no auto-update
+- See [SECURITY.md](SECURITY.md) for full dependency audit
 
 ## Roadmap
 
@@ -99,8 +136,9 @@ This is the **first Rust implementation** with batch + roundtrip. Single static 
 |---------|--------|----------|
 | v0.2.0 | ✅ | WAV + SILK + 5 subcmd |
 | v0.2.1 | ✅ | Use silk-codec 0.2, rename binary to `silk` |
+| v0.2.2 | ✅ | Apache 2.0 license, COMPARISON doc |
 | v0.3.0 | 🚧 | MP3/Opus/AAC/FLAC via symphonia |
 
 ## License
 
-MIT
+Apache 2.0 — see [LICENSE](LICENSE)

@@ -17,7 +17,7 @@ clap = { version = "4.5", features = ["derive"] }
 anyhow = "1.0"
 hound = "3.5"
 walkdir = "2.5"
-silk-codec = "0.2"
+silk-codec = "0.3"
 
 # v0.3.0 deps (require system libs / FFI):
 # symphonia = "0.5"    # MP3/Opus/AAC/FLAC decode

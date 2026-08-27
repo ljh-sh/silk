@@ -94,12 +94,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b4388bee8683e3d04af747c73422af53102d2bd24d9eadb6cbc100baef4b43f8"
 
 [[package]]
-name = "bytes"
-version = "1.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ae3f5d315924270530207e2a68396c3cc547f6dca3fbdca317cfb1a51edb593"
-
-[[package]]
 name = "cc"
 version = "1.2.65"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -362,14 +356,14 @@ checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
 
 [[package]]
 name = "silk-codec"
-version = "0.2.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "378ab490d55e4d7a0e0e1ed0b7518e4126f70ea595ac7b37cbc62dd933327b9a"
+checksum = "03582afd2f1da032e7008ee78e99588c283e10d0cf70ecc12083fefd08c479eb"
 dependencies = [
  "bindgen",
- "bytes",
  "cc",
  "glob",
+ "libc",
  "thiserror",
 ]
 
